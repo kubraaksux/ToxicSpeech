@@ -1,0 +1,21 @@
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+new_env/
+
+# Jupyter
+.ipynb_checkpoints
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
