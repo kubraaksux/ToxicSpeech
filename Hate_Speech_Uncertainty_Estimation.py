@@ -390,6 +390,70 @@ incorrect_after = np.sum(corrected_md_predictions != test_labels)
 print(f"Hybrid correction: {incorrect_before} errors → {incorrect_after} errors ({incorrect_before - incorrect_after} fixed)")
 
 # =============================================================================
+# 12. SHAP Explainability
+# =============================================================================
+
+import shap
+
+def classifier_predict(embeddings_np):
+    """Wrapper for SHAP: takes numpy embeddings, returns probabilities."""
+    t = torch.tensor(embeddings_np, dtype=torch.float32).to(device)
+    classifier.eval()
+    with torch.no_grad():
+        logits_out = classifier(t)
+        probs = torch.nn.functional.softmax(logits_out, dim=1).cpu().numpy()
+    return probs
+
+# Use KernelExplainer with a summary of training embeddings as background
+background = shap.kmeans(train_embeddings, 50)
+explainer = shap.KernelExplainer(classifier_predict, background)
+
+# Explain high-uncertainty test samples
+high_unc_indices = np.argsort(test_uncertainties)[-20:]
+high_unc_embeddings = test_embeddings[high_unc_indices]
+
+shap_values = explainer.shap_values(high_unc_embeddings, nsamples=100)
+
+# Feature importance: mean absolute SHAP value per embedding dimension
+if isinstance(shap_values, list):
+    # Multi-class: average across classes
+    mean_shap = np.mean([np.abs(sv).mean(axis=0) for sv in shap_values], axis=0)
+else:
+    mean_shap = np.abs(shap_values).mean(axis=0)
+
+top_features = np.argsort(mean_shap)[-20:][::-1]
+print("\nTop 20 most important embedding dimensions (SHAP):")
+for rank, feat_idx in enumerate(top_features, 1):
+    print(f"  {rank:2d}. Dimension {feat_idx:3d} | mean |SHAP|: {mean_shap[feat_idx]:.6f}")
+
+# =============================================================================
+# 13. Covariate Shift Detection
+# =============================================================================
+
+shift_labels = np.hstack((np.zeros(train_embeddings.shape[0]), np.ones(test_embeddings.shape[0])))
+shift_embeddings = np.vstack((train_embeddings, test_embeddings))
+
+X_shift_train, X_shift_val, y_shift_train, y_shift_val = train_test_split(
+    shift_embeddings, shift_labels, test_size=0.2, random_state=42
+)
+
+models_shift = {
+    'Logistic Regression': LogisticRegression(max_iter=1000),
+    'K-Nearest Neighbors': KNeighborsClassifier(),
+    'Decision Tree': DecisionTreeClassifier(),
+    'Support Vector Machine': SVC(probability=True)
+}
+
+print("\nCovariate Shift Detection:")
+for model_name, shift_model in models_shift.items():
+    shift_model.fit(X_shift_train, y_shift_train)
+    y_pred_prob = shift_model.predict_proba(X_shift_val)[:, 1]
+    y_pred = shift_model.predict(X_shift_val)
+    auc_roc = roc_auc_score(y_shift_val, y_pred_prob)
+    f1 = f1_score(y_shift_val, y_pred)
+    print(f'  {model_name:30s} AUC-ROC: {auc_roc:.3f}  F1: {f1:.3f}')
+
+# =============================================================================
 # 14. Visualization (saves to figures/)
 # =============================================================================
 
