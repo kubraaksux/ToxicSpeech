@@ -1,0 +1,24 @@
+# Core ML Dependencies
+torch>=1.11.0,<2.0.0
+transformers>=4.20.0,<5.0.0
+sentencepiece>=0.1.95
+
+# Data Processing
+pandas>=1.4.0,<2.0.0
+numpy>=1.21.0,<2.0.0
+scikit-learn>=1.1.0,<2.0.0
+
+# Visualization
+matplotlib>=3.5.0,<4.0.0
+seaborn>=0.11.0,<1.0.0
+matplotlib-venn>=0.11.0
+
+# Progress & Utilities
+tqdm>=4.64.0,<5.0.0
+
+# Development Dependencies
+jupyter>=1.0.0,<2.0.0
+ipykernel>=6.0.0,<7.0.0
+
+# Optional GPU support (uncomment if using CUDA)
+# torch>=1.11.0+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
