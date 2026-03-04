@@ -68,7 +68,7 @@ GMM predictions with high error rate are corrected using entropy thresholding â€
 - **Relative Mahalanobis Distance**: Class-conditional MD minus marginal MD for normalized uncertainty
 - **Robust Distance Estimation (RDE)**: Kernel PCA + Minimum Covariance Determinant
 - **Covariate Shift Detection**: Train vs. test distribution comparison using LR, KNN, DT, SVM classifiers
-- **SHAP-like Token Attribution**: Perturbation-based token-level explainability for hate speech predictions
+- **SHAP Explainability**: KernelExplainer on embedding dimensions for feature-level attribution of uncertain predictions
 - **Visualization**: 3D PCA, 2D PCA, t-SNE with misclassification overlay
 
 ## Results
@@ -99,7 +99,7 @@ ToxicSpeech/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ToxicSpeech.git
+git clone https://github.com/kubraaksux/ToxicSpeech.git
 cd ToxicSpeech
 
 # Install dependencies
@@ -123,6 +123,7 @@ python Hate_Speech_Uncertainty_Estimation.py
 - NumPy, Pandas, SciPy
 - Matplotlib, Seaborn
 - matplotlib-venn
+- SHAP
 - tqdm
 
 ## References
