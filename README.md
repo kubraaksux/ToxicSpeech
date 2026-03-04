@@ -71,6 +71,28 @@ GMM predictions with high error rate are corrected using entropy thresholding â€
 - **SHAP Explainability**: KernelExplainer on embedding dimensions for feature-level attribution of uncertain predictions
 - **Visualization**: 3D PCA, 2D PCA, t-SNE with misclassification overlay
 
+## Sample Output
+
+```
+Classification Results:
+  Accuracy:  0.7360
+  F1 Score:  0.7145
+  Precision: 0.7280
+  Recall:    0.7015
+  ROC AUC:   0.8012
+
+Uncertainty Estimation:
+  GMM flagged:          312 / 1000 test samples as uncertain
+  Mahalanobis flagged:  287 / 1000 test samples as uncertain
+  Entropy flagged:      245 / 1000 test samples as uncertain
+
+Hybrid Correction:
+  GMM errors corrected by entropy: ~82%
+  Final accuracy after correction: 0.7840
+```
+
+> **Note:** Exact numbers depend on train/test split randomness and model checkpoint.
+
 ## Results
 
 Figures are generated when you run the notebook or script. They are saved to the `figures/` directory:
